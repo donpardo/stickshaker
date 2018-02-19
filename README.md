@@ -8,10 +8,10 @@ script to generate a first pass at organizing the folders.
 
 Assumption:
 - The folder structure is generally:
-    Artist0/Album0
-    Artist0/Album1
-    Artist1/Album0
-    Artist2/Album0
+    - Artist0/Album0
+    - Artist0/Album1
+    - Artist1/Album0
+    - Artist2/Album0
 
 The structure of the changes file is as follows:
 - Two fields separated by the string :::
@@ -36,61 +36,61 @@ not "The Beatles". The only exception to this is "The The". See the
 example below.
 
 The directories are:
-Beatles, The/
-    Meet The Beatles/
-    Revolver/
-Rubber Soul/
-The Beatles/
-    Beatles For Sale/
+- Beatles, The/
+-   Meet The Beatles/
+-   Revolver/
+- Rubber Soul/
+- The Beatles/
+-    Beatles For Sale/
 
 The pertinent lines are:
-The Beatles:::Beatles
-Rubber Soul:::Beatles/
+- The Beatles:::Beatles
+- Rubber Soul:::Beatles/
 
 Based on the first line, "Beatles" is created and then the contents of
 "The Beatles" will be placed under "Beatles", resulting in:
-Beatles/
-    Beatles For Sale/
-    Meet the Beatles/
-    Revolver/
-Beatles, The/
-Rubber Soul/
-The Beatles/
+- Beatles/
+-   Beatles For Sale/
+-   Meet the Beatles/
+-   Revolver/
+- Beatles, The/
+- Rubber Soul/
+- The Beatles/
 
 The next line puts the folder "Rubber Soul" under "Beatles"
-Beatles/
-    Beatles For Sale/
-    Meet The Beatles/
-    Revolver/
-    Rubber Soul/
-Beatles, The/
-The Beatles/
+- Beatles/
+-     Beatles For Sale/
+-     Meet The Beatles/
+-     Revolver/
+-     Rubber Soul/
+- Beatles, The/
+- The Beatles/
 
 Then the empty directories are deleted, resulting in:
-Beatles/
-    Beatles For Sale/
-    Meet The Beatles/
-    Revolver/
-    Rubber Soul/
+- Beatles/
+-     Beatles For Sale/
+-     Meet The Beatles/
+-     Revolver/
+-     Rubber Soul/
 
 - Sometimes I want artists listed under artists. Ella Fitzgerald recorded
 with various notable ensembles, but she's the featured artist, so this
 is the desired end result for me:
 
-Ella Fitzgerald/
-    Ella Fitzgerald and Count Basie/
-        A Perfect Match
-    Ella Fitzgerald and Duke Ellington/
-        Ella Fitzgerald Sings The Duke Ellington Songbook
-        Ella at Duke's Place
-        Ella and Duke at The Cote D'Azur
-    Lullabies of Birdland
-    Ella Sings Gershwin
+- Ella Fitzgerald/
+-     Ella Fitzgerald and Count Basie/
+-         A Perfect Match
+-     Ella Fitzgerald and Duke Ellington/
+-         Ella Fitzgerald Sings The Duke Ellington Songbook
+-         Ella at Duke's Place
+-         Ella and Duke at The Cote D'Azur
+-     Lullabies of Birdland
+-     Ella Sings Gershwin
 
 This is accomplished by the following lines:
-Fitzgerald, Ella:::Ella Fitzgerald
-Ella Fitzgerald and Duke Ellington:::Ella Fitzgerald/
-Ella Fitzgerald and Count Basie:::Ella Fitzgerald/
+- Fitzgerald, Ella:::Ella Fitzgerald
+- Ella Fitzgerald and Duke Ellington:::Ella Fitzgerald/
+- Ella Fitzgerald and Count Basie:::Ella Fitzgerald/
 
 Note that in this instance, the capitalization rules used in the script
 may produce incorrect album names. I am willing to accept this.
