@@ -44,8 +44,8 @@ The directories are:
 	- Beatles For Sale/
 
 The pertinent lines are:
- The Beatles:::Beatles
- Rubber Soul:::Beatles/
+- The Beatles:::Beatles
+- Rubber Soul:::Beatles/
 
 Based on the first line, "Beatles" is created and then the contents of
 "The Beatles" will be placed under "Beatles", resulting in:
