@@ -42,13 +42,7 @@ with open(FULL_PATH, "r") as MOVE_LINE:
         DEST_LOC = os.path.join(MUSIC_ROOT,DEST_LOC)
         print("Destination location = " + DEST_LOC) 
         print('Moving "' + ORIG_LOC + '" to "' + DEST_LOC +'"')
-        #try:
-        #os.rename("ORIG_LOC", "DEST_LOC")
-        #except:
-        #    print ("ORIG_LOC = " + ORIG_LOC)
-        #    print ("DEST_LOC = " + DEST_LOC)
-        #    sys.exit(251)
-                
+        
         # get the last character of the destination
         my_LastChar = DEST_LOC[-1:]
         # If the destination has a trailing slash, the original
@@ -72,7 +66,6 @@ with open(FULL_PATH, "r") as MOVE_LINE:
         for f in my_files:
             try:
                 shutil.move(ORIG_LOC+f, DEST_LOC)
-            shutil.move(ORIG_LOC+f, DEST_LOC)
             except:
                 print ( "There was a problem moving " + ORIG_LOC+f + " to " + DEST_LOC )
                 print ( ORIG_LOC+f + " will be moved to EXCEPTIONS directory" )
