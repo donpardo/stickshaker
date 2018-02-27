@@ -77,6 +77,7 @@ def my_MOVING(my_FROM,my_TO):
     # need to test if this is a directory. if it is, create it in the destination
     # then move down one level and do it again. once you get to files, move those.
     for M_F in my_FILES:
+        print (M_F)
         #if os.path.isfile(M_F) and not os.path.islink(M_F):
         if os.path.isfile(my_FROM + M_F):
             my_MOVEFILES(my_FROM + M_F,my_TO)
