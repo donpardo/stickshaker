@@ -157,19 +157,19 @@ for loc_Orig in my_Folders:
     # move the original to the folder "CHECKME" to be, you know, 
     # checked. 
     #
-    if not os.listdir(loc_Orig): 
-            os.rmdir(loc_Orig)
-    else:
-        print ("Could not remove " + loc_Orig + ".")
-        print ("Moving to CHECKME directory.")
-        if not os.path.isdir(check_Me):
-            try:
-                os.makedirs(check_Me)
-            except:
-                print ("Something is wrong. CHECKME couldn't be made.")
-                print (loc_Orig + " left in place.")
-        try:
-            shutil.move(loc_Orig, check_Me)
-        except:
-            print ("Something is wrong. Couldn't move " + loc_Orig + " under CHECKME.")
-            print (loc_Orig + " left in place.")
+####    if not os.listdir(loc_Orig): 
+####            os.rmdir(loc_Orig)
+####    else:
+####        print ("Could not remove " + loc_Orig + ".")
+####        print ("Moving to CHECKME directory.")
+####        if not os.path.isdir(check_Me):
+####            try:
+####                os.makedirs(check_Me)
+####            except:
+####                print ("Something is wrong. CHECKME couldn't be made.")
+####                print (loc_Orig + " left in place.")
+####        try:
+####            shutil.move(loc_Orig, check_Me)
+####        except:
+####            print ("Something is wrong. Couldn't move " + loc_Orig + " under CHECKME.")
+####            print (loc_Orig + " left in place.")
