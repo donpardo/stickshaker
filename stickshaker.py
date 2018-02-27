@@ -85,7 +85,7 @@ def func_MoveTest(my_From,my_To):
             func_MoveFiles(my_testPath,my_To)
         if os.path.isdir(my_testPath) and not os.path.islink(my_testPath):
             func_MoveTest(my_testPath,my_To)
-        print (M_F + " is not a directory or a file. Skipping.")
+        print (my_testPath + " is not a directory or a file. Skipping.")
     return
 
 # actual thing that does stuff follows.
