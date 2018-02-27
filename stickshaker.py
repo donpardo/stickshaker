@@ -23,10 +23,10 @@ import shutil
 # set by the user
 my_style = { " the ":" The ", " and ":" and ", " & ":" and ", "_":" ", " w ":" with " }
 
-# DATA_ROOT = '/Users/matt/Stickshaker/data'
-DATA_ROOT = '/nethome/mhanes/Personal/Stickshaker/data'
-# MUSIC_ROOT = '/Users/matt/Stickshaker/music_test/music_dirs'
-MUSIC_ROOT = '/nethome/mhanes/Personal/Stickshaker/music_test/music_dirs'
+DATA_ROOT = '/Users/matt/Stickshaker/data'
+#DATA_ROOT = '/nethome/mhanes/Personal/Stickshaker/data'
+MUSIC_ROOT = '/Users/matt/Stickshaker/music_test/music_dirs'
+#MUSIC_ROOT = '/nethome/mhanes/Personal/Stickshaker/music_test/music_dirs'
 DATA_FILE = 'moves'
 FULL_PATH = os.path.join(DATA_ROOT,DATA_FILE)
 EXCEPT_DIR = os.path.join(MUSIC_ROOT,"EXCEPTIONS")
@@ -35,6 +35,7 @@ my_Folders = dict()
 my_BadDirs = list()
 
 def my_SetStyle(CHNG_LOC):
+    print("my_SetStyle successfully called")
     # This function cleans up and standardizes the name of the 
     # destination folder (DEST_LOC), using the values set in 
     # my_style above.
@@ -43,6 +44,46 @@ def my_SetStyle(CHNG_LOC):
         CHNG_LOC = my_replacement.sub(my_style[my_target], CHNG_LOC)
         CHNG_LOC = re.sub(' +', ' ', CHNG_LOC)
     return CHNG_LOC
+
+def my_MOVEFILES(my_FILE, my_DEST):
+    print("my_MOVEFILE successfully called")
+    # Do not overwrite files in the destination. If there's a 
+    # conflict, move the files to the exception directory
+    try:
+        shutil.move(my_FILE, my_DEST)
+    except:
+        print ( "There was a problem moving " + my_FILE + " to " + my_DEST )
+        print ( my_FILE + " will be moved to EXCEPTIONS directory" )
+        if not os.path.isdir(EXCEPT_DIR + OG_ORIG_LOC):
+            try:
+                os.makedirs(EXCEPT_DIR + OG_ORIG_LOC)
+            except:
+                print ("Parent exists under " + EXCEPT_DIR)
+            try:
+                shutil.move(ORIG_LOC+f, EXCEPT_DIR + OG_ORIG_LOC)
+            except:
+                print ("Something is wrong. " + OG_ORIG_LOC + "  couldn't be made under EXCEPTIONS." )
+                print ("Skipping.")
+                
+
+def my_MOVING(my_FROM,my_TO):
+    print("my_MOVING successfully called.")
+    #my_TO = my_TO + "/"
+    #my_FROM = my_FROM + "/"
+    print("From: " + my_FROM + "\nTo: " + my_TO)
+    print ("-------------")
+    my_FILES = os.listdir(my_FROM)
+    print (my_FILES)
+    # need to test if this is a directory. if it is, create it in the destination
+    # then move down one level and do it again. once you get to files, move those.
+    for M_F in my_FILES:
+        #if os.path.isfile(M_F) and not os.path.islink(M_F):
+        if os.path.isfile(my_FROM + M_F):
+            my_MOVEFILES(my_FROM + M_F,my_TO)
+        #if os.path.isdir(M_F) and not os.path.islink(M_F):
+        if os.path.isdir(my_FROM + M_F):
+            my_MOVING(my_FROM + M_F,my_TO)
+        print (M_F + " is not a directory or a file. Skipping.")
 
 with open(FULL_PATH, "r") as MOVE_LINE:
     for LINE in MOVE_LINE:
@@ -78,7 +119,7 @@ if my_BadDirs:
     print ("The following directories do not exist. You need to fix this before proceeding.")
     for my_Dir in my_BadDirs:
         print (my_Dir)
-    sys.exit()
+    sys.exit(254)
 
 # Time to do the actual moves:
 
@@ -89,55 +130,30 @@ for ORIG_LOC in my_Folders:
        os.makedirs(DEST_LOC)
 
     # Move the files from the original to the destination
-    #
-    # Do not overwrite files in the destination. If there's a 
-    # conflict, move the files to the exception directory
-    my_files = os.listdir(ORIG_LOC)
     DEST_LOC = DEST_LOC + "/"
     ORIG_LOC = ORIG_LOC + "/"
     print ("ORIG: " + ORIG_LOC)
     print ("DEST: " + DEST_LOC)
     print ("-------------")
-    for f in my_files:
-    # need to test if this is a directory. if it is, create it in the destination
-    # then move down one level and do it again. once you get to files, move those.
-        try:
-            shutil.move(ORIG_LOC+f, DEST_LOC)
-        except:
-            print ( "There was a problem moving " + ORIG_LOC+f + " to " + DEST_LOC )
-            print ( ORIG_LOC+f + " will be moved to EXCEPTIONS directory" )
-            if not os.path.isdir(EXCEPT_DIR + ORIG_LOC):
-                try:
-                    os.makedirs(EXCEPT_DIR + ORIG_LOC)
-                except:
-                    print ("Parent exists under " + EXCEPT_DIR)
-                try:
-                    shutil.move(ORIG_LOC+f, EXCEPT_DIR + ORIG_LOC)
-                except:
-                    print ("Something is wrong. " + ORIG_LOC + "  couldn't be made under EXCEPTIONS." )
-                    print ("Exiting.")
-                    sys.exit(253)
+    my_MOVING(ORIG_LOC,DEST_LOC)
 
     # Delete the original if it's empty. If it's not empty, 
     # move the original to the folder "CHECKME" to be, you know, 
     # checked. 
     if not os.listdir(ORIG_LOC): 
-        try:
             os.rmdir(ORIG_LOC)
-        except:
-            print ("Could not remove " + ORIG_LOC + ".")
-            print ("Moving to CHECKME directory.")
-            if not os.path.isdir(CHECKME):
-                try:
-                    os.makedirs(CHECKME)
-                except:
-                    print ("Something is wrong. CHECKME couldn't be made.")
-                    print ("Exiting.")
-                    sys.exit(254)
+    else:
+        print ("Could not remove " + ORIG_LOC + ".")
+        print ("Moving to CHECKME directory.")
+        if not os.path.isdir(CHECKME):
             try:
-                shutil.move(ORIG_LOC, CHECKME)
+                os.makedirs(CHECKME)
             except:
-                print ("Something is wrong. Couldn't move " + ORIG_LOC + " under CHECKME.")
-                print ("Exiting.")
-                sys.exit(252)
+                print ("Something is wrong. CHECKME couldn't be made.")
+                print (ORIG_LOC + " left in place.")
+        try:
+            shutil.move(ORIG_LOC, CHECKME)
+        except:
+            print ("Something is wrong. Couldn't move " + ORIG_LOC + " under CHECKME.")
+            print (ORIG_LOC + " left in place.")
 
