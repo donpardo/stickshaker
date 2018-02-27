@@ -5,10 +5,10 @@
 
 # TODOS:
 # - Define appropriate variables in an external file
-# - check that MUSIC_ROOT exists and is a directory
-# - check that DATA_FILE exists. if not, allow user to select file interactively
-# - check that all folders on left in DATA_FILE file exist. if not, abort.
-# - allow wildcards on left side of moves (example: Bob Dylan*:::Bob Dylan)
+# - check that music_Root exists and is a directory
+# - check that moveFileName exists. if not, allow user to select file interactively
+# - check that all folders on left in moveFileName file exist. if not, abort.
+# - allow wildcards on left side of moves (example: Bob Dylan*:::Bob Dylan/)
 # - final pass to clean up directory names regardless of whether or not
 #       they are in the moves file.
 # - allow user to review, edit and supplement the my_style entries
@@ -23,138 +23,153 @@ import shutil
 # set by the user
 my_style = { " the ":" The ", " and ":" and ", " & ":" and ", "_":" ", " w ":" with " }
 
-DATA_ROOT = '/Users/matt/Stickshaker/data'
-#DATA_ROOT = '/nethome/mhanes/Personal/Stickshaker/data'
-MUSIC_ROOT = '/Users/matt/Stickshaker/music_test/music_dirs'
-#MUSIC_ROOT = '/nethome/mhanes/Personal/Stickshaker/music_test/music_dirs'
-DATA_FILE = 'moves'
-FULL_PATH = os.path.join(DATA_ROOT,DATA_FILE)
-EXCEPT_DIR = os.path.join(MUSIC_ROOT,"EXCEPTIONS")
-CHECKME = os.path.join(MUSIC_ROOT,"CHECKME")
+#music_Root = '/Users/matt/Stickshaker/music_test/music_dirs'
+#data_Root = '/Users/matt/Stickshaker/data'
+data_Root = '/nethome/mhanes/Personal/Stickshaker/data'
+music_Root = '/nethome/mhanes/Personal/Stickshaker/music_test/music_dirs'
+moveFileName = 'moves'
+moveFilePath = os.path.join(data_Root,moveFileName)
+exception_Dir = os.path.join(music_Root,"EXCEPTIONS")
+check_Me = os.path.join(music_Root,"CHECKME")
 my_Folders = dict()
 my_BadDirs = list()
 
-def my_SetStyle(CHNG_LOC):
-    print("my_SetStyle successfully called")
+def func_SetStyle(my_ChngLoc):
+    print("func_SetStyle successfully called")
     # This function cleans up and standardizes the name of the 
-    # destination folder (DEST_LOC), using the values set in 
+    # destination folder (loc_Dest), using the values set in 
     # my_style above.
     for my_target in my_style:
         my_replacement = re.compile(re.escape(my_target), re.IGNORECASE)
-        CHNG_LOC = my_replacement.sub(my_style[my_target], CHNG_LOC)
-        CHNG_LOC = re.sub(' +', ' ', CHNG_LOC)
-    return CHNG_LOC
+        my_ChngLoc = my_replacement.sub(my_style[my_target], my_ChngLoc)
+        my_ChngLoc = re.sub(' +', ' ', my_ChngLoc)
+    return my_ChngLoc
 
-def my_MOVEFILES(my_FILE, my_DEST):
+def func_MoveFiles(my_File, loc_Final):
     print("my_MOVEFILE successfully called")
     # Do not overwrite files in the destination. If there's a 
     # conflict, move the files to the exception directory
     try:
-        shutil.move(my_FILE, my_DEST)
+        shutil.move(my_File, loc_Final)
     except:
-        print ( "There was a problem moving " + my_FILE + " to " + my_DEST )
-        print ( my_FILE + " will be moved to EXCEPTIONS directory" )
-        if not os.path.isdir(EXCEPT_DIR + OG_ORIG_LOC):
+        print ( "There was a problem moving " + my_File + " to " + loc_Final )
+        print ( my_File + " will be moved to EXCEPTIONS directory" )
+        if not os.path.isdir(exception_Dir + loc_OG):
             try:
-                os.makedirs(EXCEPT_DIR + OG_ORIG_LOC)
+                os.makedirs(exception_Dir + loc_OG)
             except:
-                print ("Parent exists under " + EXCEPT_DIR)
+                print ("Parent exists under " + exception_Dir)
             try:
-                shutil.move(ORIG_LOC+f, EXCEPT_DIR + OG_ORIG_LOC)
+                shutil.move(loc_Orig+f, exception_Dir + loc_OG)
             except:
-                print ("Something is wrong. " + OG_ORIG_LOC + "  couldn't be made under EXCEPTIONS." )
+                print ("Something is wrong. " + loc_OG + "  couldn't be made under EXCEPTIONS." )
                 print ("Skipping.")
-                
+    return                
 
-def my_MOVING(my_FROM,my_TO):
-    print("my_MOVING successfully called.")
-    #my_TO = my_TO + "/"
-    #my_FROM = my_FROM + "/"
-    print("From: " + my_FROM + "\nTo: " + my_TO)
+def func_MoveTest(my_From,my_To):
+    print("func_MoveTest successfully called.")
+    print("From: " + my_From + "\nTo: " + my_To)
     print ("-------------")
-    my_FILES = os.listdir(my_FROM)
-    print (my_FILES)
-    # need to test if this is a directory. if it is, create it in the destination
-    # then move down one level and do it again. once you get to files, move those.
-    for M_F in my_FILES:
-        print (M_F)
-        #if os.path.isfile(M_F) and not os.path.islink(M_F):
-        if os.path.isfile(my_FROM + M_F):
-            my_MOVEFILES(my_FROM + M_F,my_TO)
-        #if os.path.isdir(M_F) and not os.path.islink(M_F):
-        if os.path.isdir(my_FROM + M_F):
-            my_MOVING(my_FROM + M_F,my_TO)
+    #
+    # Test each of the contents of my_FROM to see if it is a
+    # directory. If it is, create it in the destination then move down
+    # one level and do it again. If it is a file, move it.
+    #
+    my_Files = os.listdir(my_From)
+    print (my_Files)
+    for M_F in my_Files:
+        print("testing files under " + my_From)
+        my_testPath = os.path.join(my_From,M_F)
+        print (my_testPath)
+        if os.path.isfile(my_testPath) and not os.path.islink(my_testPath):
+            func_MoveFiles(my_testPath,my_To)
+        if os.path.isdir(my_testPath) and not os.path.islink(my_testPath):
+            func_MoveTest(my_testPath,my_To)
         print (M_F + " is not a directory or a file. Skipping.")
+    return
 
-with open(FULL_PATH, "r") as MOVE_LINE:
-    for LINE in MOVE_LINE:
+# actual thing that does stuff follows.
+
+with open(moveFilePath, "r") as my_MoveLine:
+    for my_Line in my_MoveLine:
         # get the two locations
-        ORIG_LOC, DEST_LOC = LINE.split(":::")
-        ORIG_LOC = ORIG_LOC.rstrip()
-        DEST_LOC = DEST_LOC.rstrip()
-
+        loc_Orig, loc_Dest = my_Line.split(":::")
+        loc_Orig = loc_Orig.rstrip()
+        loc_Dest = loc_Dest.rstrip()
+        #
         # get the last character of the destination
-        my_LastChar = DEST_LOC[-1:]
+        #
+        my_LastChar = loc_Dest[-1:]
+        #
         # If the destination has a trailing slash, the original
         # directory gets put under the destination
+        #
         if my_LastChar == '/':
-            DEST_LOC = os.path.join(DEST_LOC,ORIG_LOC)
-
+            loc_Dest = os.path.join(loc_Dest,loc_Orig)
+        #
         # set the destination per style
-        DEST_LOC = my_SetStyle(DEST_LOC)
-
+        #
+        loc_Dest = func_SetStyle(loc_Dest)
+        #
         # build destination directory full path
-        DEST_LOC = os.path.join(MUSIC_ROOT,DEST_LOC)
-
-        ORIG_LOC = os.path.join(MUSIC_ROOT,ORIG_LOC)
-        print('Moving: "' + ORIG_LOC + '"\n    to: "' + DEST_LOC +'"')
-
+        #
+        loc_Dest = os.path.join(music_Root,loc_Dest)
+        loc_Orig = os.path.join(music_Root,loc_Orig)
+        print('Moving: "' + loc_Orig + '"\n    to: "' + loc_Dest +'"')
+        #
         # add to dictionary for use below
-        my_Folders[ORIG_LOC] = DEST_LOC
-
+        #
+        my_Folders[loc_Orig] = loc_Dest
+        #
         # check if left side exists. note it if it does not.
-        if not os.path.isdir(ORIG_LOC):
-            my_BadDirs.append(ORIG_LOC)
-
+        #
+        if not os.path.isdir(loc_Orig):
+            my_BadDirs.append(loc_Orig)
+#
+# alert the user, if needed
+#
 if my_BadDirs:
     print ("The following directories do not exist. You need to fix this before proceeding.")
     for my_Dir in my_BadDirs:
         print (my_Dir)
     sys.exit(254)
-
+#
 # Time to do the actual moves:
-
-for ORIG_LOC in my_Folders:
-    DEST_LOC = my_Folders[ORIG_LOC]
+#
+for loc_Orig in my_Folders:
+    loc_Dest = my_Folders[loc_Orig]
+    #
     # Make the destination directory 
-    if not os.path.isdir(DEST_LOC):
-       os.makedirs(DEST_LOC)
-
+    #
+    if not os.path.isdir(loc_Dest):
+       os.makedirs(loc_Dest)
+    #
     # Move the files from the original to the destination
-    DEST_LOC = DEST_LOC + "/"
-    ORIG_LOC = ORIG_LOC + "/"
-    print ("ORIG: " + ORIG_LOC)
-    print ("DEST: " + DEST_LOC)
+    #
+    loc_Dest = loc_Dest + "/"
+    loc_Orig = loc_Orig + "/"
+    print ("ORIG: " + loc_Orig)
+    print ("DEST: " + loc_Dest)
     print ("-------------")
-    my_MOVING(ORIG_LOC,DEST_LOC)
-
+    func_MoveTest(loc_Orig,loc_Dest)
+    #
     # Delete the original if it's empty. If it's not empty, 
     # move the original to the folder "CHECKME" to be, you know, 
     # checked. 
-    if not os.listdir(ORIG_LOC): 
-            os.rmdir(ORIG_LOC)
+    #
+    if not os.listdir(loc_Orig): 
+            os.rmdir(loc_Orig)
     else:
-        print ("Could not remove " + ORIG_LOC + ".")
+        print ("Could not remove " + loc_Orig + ".")
         print ("Moving to CHECKME directory.")
-        if not os.path.isdir(CHECKME):
+        if not os.path.isdir(check_Me):
             try:
-                os.makedirs(CHECKME)
+                os.makedirs(check_Me)
             except:
                 print ("Something is wrong. CHECKME couldn't be made.")
-                print (ORIG_LOC + " left in place.")
+                print (loc_Orig + " left in place.")
         try:
-            shutil.move(ORIG_LOC, CHECKME)
+            shutil.move(loc_Orig, check_Me)
         except:
-            print ("Something is wrong. Couldn't move " + ORIG_LOC + " under CHECKME.")
-            print (ORIG_LOC + " left in place.")
-
+            print ("Something is wrong. Couldn't move " + loc_Orig + " under CHECKME.")
+            print (loc_Orig + " left in place.")
