@@ -96,6 +96,7 @@ def func_MoveFiles(fmf_filePath, fmf_finalLoc, fmf_failDir):
     print ("fmf_finalLoc = " + fmf_finalLoc)
     try:
         shutil.move(fmf_filePath, fmf_finalLoc)
+    # This needs fixing:
     except (IOError):
         print (IOError)
         raise
