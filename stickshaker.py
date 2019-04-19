@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 #
 # Crudely reorganizes a music collection based on 
 # the contents of a file described in the README
@@ -29,8 +29,10 @@ import shutil
 # fxx_ = function XX
 #
 
-glbl_musicRoot = '/Users/matt/Stickshaker/music_test/music_dirs'
-glbl_dataRoot = '/Users/matt/Stickshaker/data'
+glbl_musicRoot = '/home/matt/Music_test'
+glbl_dataRoot = '/home/matt/Music_test/data'
+#glbl_musicRoot = '/Users/matt/Stickshaker/music_test/music_dirs'
+#glbl_dataRoot = '/Users/matt/Stickshaker/data'
 #glbl_dataRoot = '/nethome/mhanes/Personal/Stickshaker/data'
 #glbl_musicRoot = '/nethome/mhanes/Personal/Stickshaker/music_test/music_dirs'
 glbl_moveFileName = 'moves'
@@ -108,14 +110,14 @@ def func_MoveFiles(fmf_filePath, fmf_finalLoc, fmf_failDir):
 # I am not proud.
 
 def func_DeleteDirs(fdd_topLevel):
-    fdd_deleteCount == 0
+    fdd_deleteCount = 0
     for fdd_root, fdd_dirs, fdd_files in os.walk(fdd_topLevel, topdown=False):
         for fdd_name in fdd_dirs:
             fdd_dirPath = os.path.join(fdd_root, fdd_name)
             if not os.listdir(fdd_dirPath):  # An empty list is False
                 os.rmdir(os.path.join(fdd_root, fdd_name))
                 fdd_deleteCount += 1
-    print (fdd_deleteCount + "empty directories deleted.")
+    print (str(dd_deleteCount) + "empty directories deleted.")
     return
 
 # actual thing that does stuff follows.
